@@ -1,9 +1,7 @@
 package main
 
 import (
-	"fmt"
-
-	"github.com/ahmadexe/GoCoin-Chain/block"
+	"github.com/ahmadexe/GoCoin-Chain/blockchain"
 )
 
 func main() {
@@ -13,12 +11,22 @@ func main() {
 	// bc.CreateBlock(2, "Hash 2")
 	// bc.Print()
 
-	b := &block.Block{
-		Nonce:        1,
-		Transactions: []string{},
-		TimeStamp:    1,
-	}
+	// b := &block.Block{
+	// 	Nonce:        1,
+	// 	Transactions: []string{},
+	// 	TimeStamp:    1,
+	// }
 
-	fmt.Printf("%x\n",b.Hash())
+	// fmt.Printf("%x\n",b.Hash())
 
+	blockchain := blockchain.NewBlockchain()
+	blockchain.Print()
+
+	prevHash := blockchain.LastBlock().Hash()
+	blockchain.CreateBlock(1, prevHash)
+	blockchain.Print()
+
+	prevHash = blockchain.LastBlock().Hash()
+	blockchain.CreateBlock(2, prevHash)
+	blockchain.Print()
 }

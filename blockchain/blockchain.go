@@ -35,3 +35,7 @@ func (bc *Blockchain) Print() {
 		fmt.Println(strings.Repeat("-", 53))
 	}
 }
+
+func (bc *Blockchain) LastBlock() *block.Block {
+	return bc.chain[len(bc.chain)-1]
+}
