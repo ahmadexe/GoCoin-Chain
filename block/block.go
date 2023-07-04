@@ -9,12 +9,12 @@ import (
 
 type Block struct {
 	Nonce        int      `json:"nonce"`
-	PreviousHash string   `json:"previousHash"`
+	PreviousHash [32]byte   `json:"previousHash"`
 	Transactions []string `json:"transactions"`
 	TimeStamp    int64    `json:"timeStamp"`
 }
 
-func NewBlock(nonce int, previousHash string, transactions []string) *Block {
+func NewBlock(nonce int, previousHash [32]byte, transactions []string) *Block {
 	return &Block{nonce, previousHash, transactions, time.Now().UnixNano()}
 }
 

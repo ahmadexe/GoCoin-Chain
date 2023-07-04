@@ -12,18 +12,19 @@ type Blockchain struct {
 	chain           []*block.Block
 }
 
-func (bc *Blockchain) CreateBlock(nonce int, previousHash string) *block.Block {
-	block := block.NewBlock(nonce, previousHash, []string{})
+func (bc *Blockchain) CreateBlock(nonce int, previousHash [32]byte) *block.Block {
+	block := block.NewBlock(nonce, previousHash ,[]string{})
 	bc.chain = append(bc.chain, block)
 	return block
 }
 
 func NewBlockchain() *Blockchain {
+	b := &block.Block{}
 	bc := &Blockchain{
 		[]string{},
 		[]*block.Block{},
 	}
-	bc.CreateBlock(0, "Init Hash")
+	bc.CreateBlock(0, b.Hash())
 	return bc
 }
 

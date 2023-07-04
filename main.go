@@ -15,7 +15,6 @@ func main() {
 
 	b := &block.Block{
 		Nonce:        1,
-		PreviousHash: "Previous Hash",
 		Transactions: []string{},
 		TimeStamp:    1,
 	}
