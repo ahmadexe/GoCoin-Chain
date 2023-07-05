@@ -13,6 +13,8 @@ type Blockchain struct {
 	chain           []*block.Block
 }
 
+const MINING_DIFFICULTY = 3
+
 func NewBlockchain() *Blockchain {
 	b := &block.Block{}
 	bc := &Blockchain{
@@ -37,6 +39,37 @@ func (bc *Blockchain) AddTransaction(senderChainAddress string, recipientChainAd
 
 func (bc *Blockchain) LastBlock() *block.Block {
 	return bc.chain[len(bc.chain)-1]
+}
+
+func (bc *Blockchain) CopyTransactions() []*transaction.Transaction {
+	var transactions []*transaction.Transaction
+	for _, t := range bc.transactionPool {
+		transaction := &transaction.Transaction{
+			SenderChainAddress:    t.SenderChainAddress,
+			RecipientChainAddress: t.RecipientChainAddress,
+			Value:                 t.Value,
+		}
+
+		transactions = append(transactions, transaction)
+	}
+	return transactions
+}
+
+func (bc *Blockchain) ValidProof(nonce int, previousHash [32]byte, transactions []*transaction.Transaction, difficulty int) bool {
+	zeroes := strings.Repeat("0", difficulty)
+	guessBlock := block.Block{Nonce: nonce, PreviousHash: previousHash, Transactions: transactions, TimeStamp: 0}
+	guessHashStr := fmt.Sprintf("%x", guessBlock.Hash())
+	return guessHashStr[:difficulty] == zeroes
+}
+
+func (bc *Blockchain) ProofOfWork() int {
+	transactions := bc.CopyTransactions()
+	previousHash := bc.LastBlock().Hash()
+	nonce := 0
+	for !bc.ValidProof(nonce, previousHash, transactions, MINING_DIFFICULTY) {
+		nonce++
+	}
+	return nonce
 }
 
 func (bc *Blockchain) Print() {
