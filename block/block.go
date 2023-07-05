@@ -22,7 +22,7 @@ func NewBlock(nonce int, previousHash [32]byte, transactions []*transaction.Tran
 
 func (b *Block) Print() {
 	fmt.Printf("nonce: %d\n", b.Nonce)
-	fmt.Printf("previousHash: %s\n", b.PreviousHash)
+	fmt.Printf("previousHash: %x\n", b.PreviousHash)
 	fmt.Printf("timeStamp: %d\n", b.TimeStamp)
 	for _, t := range b.Transactions {
 		t.Print()
