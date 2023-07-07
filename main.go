@@ -15,23 +15,16 @@ func main() {
 	// 	Nonce:        1,
 	// 	Transactions: []string{},
 	// 	TimeStamp:    1,
-	// }
+	// }	
 
-	// fmt.Printf("%x\n",b.Hash())
-
-	blockchain := blockchain.NewBlockchain()
-	// blockchain.Print()
-	
+	chainAddress := "my chain address";
+	blockchain := blockchain.NewBlockchain(chainAddress)
 	blockchain.AddTransaction("A", "B", 1.0)
-	prevHash := blockchain.LastBlock().Hash()
-	nonce := blockchain.ProofOfWork()
-	blockchain.CreateBlock(nonce, prevHash)
-	// blockchain.Print()
+	blockchain.Mining()
+	blockchain.Print()
 
 	blockchain.AddTransaction("C", "D", 2.0)
 	blockchain.AddTransaction("X", "Y", 3.0)
-	prevHash = blockchain.LastBlock().Hash()
-	nonce = blockchain.ProofOfWork()
-	blockchain.CreateBlock(nonce, prevHash)
+	blockchain.Mining()
 	blockchain.Print()
 }

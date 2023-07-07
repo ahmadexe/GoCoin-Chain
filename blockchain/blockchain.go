@@ -11,21 +11,27 @@ import (
 type Blockchain struct {
 	transactionPool []*transaction.Transaction
 	chain           []*block.Block
+	blockchainAddress string
 }
 
-const MINING_DIFFICULTY = 3
+const (
+	MINING_DIFFICULTY = 3
+	MINING_REWARD = 1.0
+	MINING_SENDER = "THE BLOCKCHAIN"
+)
 
-func NewBlockchain() *Blockchain {
+func NewBlockchain(blockchainAddress string) *Blockchain {
 	b := &block.Block{}
 	bc := &Blockchain{
 		[]*transaction.Transaction{},
 		[]*block.Block{},
+		blockchainAddress,
 	}
-	bc.CreateBlock(0, b.Hash())
+	bc.createBlock(0, b.Hash())
 	return bc
 }
 
-func (bc *Blockchain) CreateBlock(nonce int, previousHash [32]byte) *block.Block {
+func (bc *Blockchain) createBlock(nonce int, previousHash [32]byte) *block.Block {
 	block := block.NewBlock(nonce, previousHash, bc.transactionPool)
 	bc.chain = append(bc.chain, block)
 	bc.transactionPool = []*transaction.Transaction{}
@@ -70,6 +76,15 @@ func (bc *Blockchain) ProofOfWork() int {
 		nonce++
 	}
 	return nonce
+}
+
+func (bc *Blockchain) Mining() bool {
+	bc.AddTransaction(MINING_SENDER, bc.blockchainAddress, MINING_REWARD)
+	nonce := bc.ProofOfWork()
+	previousHash := bc.LastBlock().Hash()
+	bc.createBlock(nonce, previousHash)
+	fmt.Println("Mining is successful!")
+	return true
 }
 
 func (bc *Blockchain) Print() {
