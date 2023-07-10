@@ -1,6 +1,8 @@
 package main
 
 import (
+	"fmt"
+
 	"github.com/ahmadexe/GoCoin-Chain/blockchain"
 )
 
@@ -15,9 +17,9 @@ func main() {
 	// 	Nonce:        1,
 	// 	Transactions: []string{},
 	// 	TimeStamp:    1,
-	// }	
+	// }
 
-	chainAddress := "my chain address";
+	chainAddress := "my chain address"
 	blockchain := blockchain.NewBlockchain(chainAddress)
 	blockchain.AddTransaction("A", "B", 1.0)
 	blockchain.Mining()
@@ -27,4 +29,12 @@ func main() {
 	blockchain.AddTransaction("X", "Y", 3.0)
 	blockchain.Mining()
 	blockchain.Print()
+
+	fmt.Println("A's balance is", blockchain.CalculataBalance("A"))
+	fmt.Println("B's balance is", blockchain.CalculataBalance("B"))
+	fmt.Println("C's balance is", blockchain.CalculataBalance("C"))
+	fmt.Println("D's balance is", blockchain.CalculataBalance("D"))
+	fmt.Println("X's balance is", blockchain.CalculataBalance("X"))
+	fmt.Println("Y's balance is", blockchain.CalculataBalance("Y"))
+	fmt.Println("my chain address's balance is", blockchain.CalculataBalance(chainAddress))
 }

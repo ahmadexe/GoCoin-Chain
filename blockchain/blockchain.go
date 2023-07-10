@@ -9,15 +9,15 @@ import (
 )
 
 type Blockchain struct {
-	transactionPool []*transaction.Transaction
-	chain           []*block.Block
+	transactionPool   []*transaction.Transaction
+	chain             []*block.Block
 	blockchainAddress string
 }
 
 const (
 	MINING_DIFFICULTY = 3
-	MINING_REWARD = 1.0
-	MINING_SENDER = "THE BLOCKCHAIN"
+	MINING_REWARD     = 1.0
+	MINING_SENDER     = "THE BLOCKCHAIN"
 )
 
 func NewBlockchain(blockchainAddress string) *Blockchain {
@@ -85,6 +85,21 @@ func (bc *Blockchain) Mining() bool {
 	bc.createBlock(nonce, previousHash)
 	fmt.Println("Mining is successful!")
 	return true
+}
+
+func (bc *Blockchain) CalculataBalance(address string) float32 {
+	var total float32 = 0.0
+	for _, b := range bc.chain {
+		for _, t := range b.Transactions {
+			value := t.Value
+			if address == t.RecipientChainAddress {
+				total += value
+			} else if address == t.SenderChainAddress {
+				total -= value
+			}
+		}
+	}
+	return total
 }
 
 func (bc *Blockchain) Print() {
