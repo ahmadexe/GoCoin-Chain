@@ -5,7 +5,9 @@ import (
 	"crypto/elliptic"
 	"crypto/rand"
 	"crypto/sha256"
+	"encoding/json"
 	"fmt"
+	"math/big"
 
 	"github.com/btcsuite/btcutil/base58"
 	"golang.org/x/crypto/ripemd160"
@@ -84,4 +86,44 @@ func (w *Wallet) PrivateKeyStr() string {
 
 func (w *Wallet) PublicKeyStr() string {
 	return fmt.Sprintf("%x%x", w.PublicKey.X.Bytes(), w.PublicKey.Y.Bytes())
+}
+
+type Transaction struct {
+	senderPrivateKey      *ecdsa.PrivateKey
+	senderPublicKey       *ecdsa.PublicKey
+	senderChainAddress    string
+	recipientChainAddress string
+	value                 float32
+}
+
+func NewTransaction(senderPrivateKey *ecdsa.PrivateKey, senderPublicKey *ecdsa.PublicKey, senderChainAddress string, recipientChainAddress string, value float32) *Transaction {
+	return &Transaction{senderPrivateKey, senderPublicKey, senderChainAddress, recipientChainAddress, value}
+}
+
+func (t *Transaction) MarshalJSON() ([]byte, error) {
+	return json.Marshal(struct {
+		SenderChainAddress    string  `json:"senderChainAddress"`
+		RecipientChainAddress string  `json:"recipientChainAddress"`
+		Value                 float32 `json:"value"`
+	}{
+		SenderChainAddress:    t.senderChainAddress,
+		RecipientChainAddress: t.recipientChainAddress,
+		Value:                 t.value,
+	})
+}
+
+func (t *Transaction) GenerateSignature() *Signature {
+	m, _ := json.Marshal(t)
+	h := sha256.Sum256([]byte(m))
+	r, s, _ := ecdsa.Sign(rand.Reader, t.senderPrivateKey, h[:])
+	return &Signature{r, s}
+}
+
+type Signature struct {
+	R *big.Int
+	S *big.Int
+}
+
+func (s *Signature) String() string {
+	return fmt.Sprintf("%x%x", s.R, s.S)
 }
