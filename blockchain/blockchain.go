@@ -1,11 +1,15 @@
 package blockchain
 
 import (
+	"crypto/ecdsa"
+	"crypto/sha256"
+	"encoding/json"
 	"fmt"
 	"strings"
 
 	"github.com/ahmadexe/GoCoin-Chain/block"
 	"github.com/ahmadexe/GoCoin-Chain/transaction"
+	"github.com/ahmadexe/GoCoin-Chain/utils"
 )
 
 type Blockchain struct {
@@ -38,9 +42,19 @@ func (bc *Blockchain) createBlock(nonce int, previousHash [32]byte) *block.Block
 	return block
 }
 
-func (bc *Blockchain) AddTransaction(senderChainAddress string, recipientChainAddress string, value float32) {
+func (bc *Blockchain) AddTransaction(senderChainAddress string, recipientChainAddress string, value float32, senderPublicKey *ecdsa.PublicKey, signature *utils.Signature) bool {
+
 	transaction := transaction.NewTransaction(senderChainAddress, recipientChainAddress, value)
-	bc.transactionPool = append(bc.transactionPool, transaction)
+
+
+	if (senderChainAddress == MINING_SENDER) {
+		bc.transactionPool = append(bc.transactionPool, transaction)
+		return true
+	} else if (bc.verifyTransaction(senderPublicKey, signature, transaction)) {
+		bc.transactionPool = append(bc.transactionPool, transaction)
+		return true
+	}
+	return false
 }
 
 func (bc *Blockchain) LastBlock() *block.Block {
@@ -79,7 +93,7 @@ func (bc *Blockchain) ProofOfWork() int {
 }
 
 func (bc *Blockchain) Mining() bool {
-	bc.AddTransaction(MINING_SENDER, bc.blockchainAddress, MINING_REWARD)
+	bc.AddTransaction(MINING_SENDER, bc.blockchainAddress, MINING_REWARD, nil, nil)
 	nonce := bc.ProofOfWork()
 	previousHash := bc.LastBlock().Hash()
 	bc.createBlock(nonce, previousHash)
@@ -87,7 +101,7 @@ func (bc *Blockchain) Mining() bool {
 	return true
 }
 
-func (bc *Blockchain) CalculataBalance(address string) float32 {
+func (bc *Blockchain) CalculateBalance(address string) float32 {
 	var total float32 = 0.0
 	for _, b := range bc.chain {
 		for _, t := range b.Transactions {
@@ -100,6 +114,12 @@ func (bc *Blockchain) CalculataBalance(address string) float32 {
 		}
 	}
 	return total
+}
+
+func (bc *Blockchain) verifyTransaction(senderPublicKey *ecdsa.PublicKey, sig *utils.Signature, t *transaction.Transaction) bool {
+	m, _ := json.Marshal(t)
+	hash := sha256.Sum256(m)
+	return ecdsa.Verify(senderPublicKey, hash[:], sig.R, sig.S)
 }
 
 func (bc *Blockchain) Print() {

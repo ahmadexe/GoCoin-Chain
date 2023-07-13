@@ -17,7 +17,7 @@ func NewTransaction(senderAddress string, recipientAddress string, val float32) 
 
 func (t *Transaction) Print() {
 	fmt.Println(strings.Repeat("-", 40))
-	fmt.Printf("senderChainAddress: %s\n", t.SenderChainAddress)
+	fmt.Printf("senderChainAddres: %s\n", t.SenderChainAddress)
 	fmt.Printf("recipientChainAddress: %s\n", t.RecipientChainAddress)
 	fmt.Printf("value: %f\n", t.Value)
 	fmt.Println(strings.Repeat("-", 40))
