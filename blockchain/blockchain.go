@@ -46,11 +46,10 @@ func (bc *Blockchain) AddTransaction(senderChainAddress string, recipientChainAd
 
 	transaction := transaction.NewTransaction(senderChainAddress, recipientChainAddress, value)
 
-
-	if (senderChainAddress == MINING_SENDER) {
+	if senderChainAddress == MINING_SENDER {
 		bc.transactionPool = append(bc.transactionPool, transaction)
 		return true
-	} else if (bc.verifyTransaction(senderPublicKey, signature, transaction)) {
+	} else if bc.verifyTransaction(senderPublicKey, signature, transaction) {
 		bc.transactionPool = append(bc.transactionPool, transaction)
 		return true
 	}
