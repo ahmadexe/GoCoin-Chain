@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/json"
 	"io"
 	"log"
 	"net/http"
@@ -9,7 +10,6 @@ import (
 	"github.com/ahmadexe/GoCoin-Chain/blockchain"
 	"github.com/ahmadexe/GoCoin-Chain/wallet"
 )
-
 
 type BlockchainServer struct {
 	port uint16
@@ -23,7 +23,7 @@ func (bcs *BlockchainServer) GetBlockchain() *blockchain.Blockchain {
 		minersWallter := wallet.NewWallet()
 		bc = blockchain.NewBlockchain(minersWallter.BlockchainAddress, bcs.Port())
 		cache["blockchain"] = bc
-		
+
 		// ! Don't log private keys in a real application
 		log.Println("Created a new blockchain")
 		log.Printf("Private key: %v\n", minersWallter.PrivateKey)
@@ -31,6 +31,17 @@ func (bcs *BlockchainServer) GetBlockchain() *blockchain.Blockchain {
 		log.Printf("Blockchain Address key: %v\n", minersWallter.PrivateKey)
 	}
 	return bc
+}
+
+func (bcs *BlockchainServer) GetChain(w http.ResponseWriter, r *http.Request) {
+	switch r.Method {
+	case http.MethodGet:
+		bc := bcs.GetBlockchain()
+		m, _ := json.Marshal(bc)
+		io.WriteString(w, string(m[:]))
+	default:
+		log.Println("Method not allowed")
+	}
 }
 
 func NewBlockchainServer(port uint16) *BlockchainServer {
@@ -46,6 +57,6 @@ func HelloWorld(w http.ResponseWriter, r *http.Request) {
 }
 
 func (bcs *BlockchainServer) Run() {
-	http.HandleFunc("/", HelloWorld)
+	http.HandleFunc("/", bcs.GetChain)
 	log.Fatal(http.ListenAndServe("0.0.0.0:"+strconv.Itoa(int(bcs.Port())), nil))
 }

@@ -9,21 +9,36 @@ import (
 	"github.com/ahmadexe/GoCoin-Chain/transaction"
 )
 
+
 type Block struct {
-	Nonce        int                        `json:"nonce"`
-	PreviousHash [32]byte                   `json:"previousHash"`
-	Transactions []*transaction.Transaction `json:"transactions"`
-	TimeStamp    int64                      `json:"timeStamp"`
+	TimeStamp    int64
+	Nonce        int
+	PreviousHash [32]byte
+	Transactions []*transaction.Transaction
 }
 
 func NewBlock(nonce int, previousHash [32]byte, transactions []*transaction.Transaction) *Block {
-	return &Block{nonce, previousHash, transactions, time.Now().UnixNano()}
+	return &Block{Nonce: nonce, PreviousHash: previousHash, Transactions: transactions, TimeStamp: time.Now().UnixNano()}
+}
+
+func (b *Block) MarshalJSON() ([]byte, error) {
+	return json.Marshal(struct {
+		TimeStamp    int64                      `json:"timeStamp"`
+		Nonce        int                        `json:"nonce"`
+		PreviousHash string                   `json:"previousHash"`
+		Transactions []*transaction.Transaction `json:"transactions"`
+	}{
+		TimeStamp:    b.TimeStamp,
+		Nonce:        b.Nonce,
+		PreviousHash: fmt.Sprintf("%x",b.PreviousHash),
+		Transactions: b.Transactions,
+	})
 }
 
 func (b *Block) Print() {
-	fmt.Printf("nonce: %d\n", b.Nonce)
-	fmt.Printf("previousHash: %x\n", b.PreviousHash)
-	fmt.Printf("timeStamp: %d\n", b.TimeStamp)
+	fmt.Printf("Nonce: %d\n", b.Nonce)
+	fmt.Printf("PreviousHash: %x\n", b.PreviousHash)
+	fmt.Printf("TimeStamp: %d\n", b.TimeStamp)
 	for _, t := range b.Transactions {
 		t.Print()
 	}
