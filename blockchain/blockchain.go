@@ -16,6 +16,7 @@ type Blockchain struct {
 	transactionPool   []*transaction.Transaction
 	chain             []*block.Block
 	blockchainAddress string
+	port              uint16
 }
 
 const (
@@ -24,12 +25,13 @@ const (
 	MINING_SENDER     = "THE BLOCKCHAIN"
 )
 
-func NewBlockchain(blockchainAddress string) *Blockchain {
+func NewBlockchain(blockchainAddress string, port uint16) *Blockchain {
 	b := &block.Block{}
 	bc := &Blockchain{
 		[]*transaction.Transaction{},
 		[]*block.Block{},
 		blockchainAddress,
+		port,
 	}
 	bc.createBlock(0, b.Hash())
 	return bc
