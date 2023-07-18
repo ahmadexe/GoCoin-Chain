@@ -37,7 +37,7 @@ func NewWallet() *Wallet {
 	w := &Wallet{}
 	privateKey, _ := ecdsa.GenerateKey(elliptic.P256(), rand.Reader)
 	w.PrivateKey = privateKey
-	w.PublicKey = &w.PrivateKey.PublicKey
+	w.PublicKey = &privateKey.PublicKey
 
 	// Step 3
 	h2 := sha256.New()
@@ -51,9 +51,9 @@ func NewWallet() *Wallet {
 	digest3 := h3.Sum(nil)
 
 	// Step 5
-	vd4 := make([]byte, 21)
+	vd4 := make([]byte, 1)
 	vd4[0] = 0x00
-	copy(vd4[1:], digest3[:])
+	copy(vd4[1:], digest3)
 
 	// Step 6
 	h5 := sha256.New()
