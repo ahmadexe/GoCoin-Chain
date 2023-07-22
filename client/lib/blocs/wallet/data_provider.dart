@@ -1,11 +1,11 @@
 part of 'wallet_bloc.dart';
 
 class _WallterProvider {
-  final handler = Dio();
+  static final _handler = Dio();
 
   static Future<Wallet> getWalletDetails() async {
     try {
-      final response = await Dio().post(
+      final response = await _handler.post(
         'http://0.0.0.0:8080/wallet',
       );
 
