@@ -1,5 +1,3 @@
 part of 'wallet_bloc.dart';
 
-class _WallterProvider {
-  
-}
+class _WallterProvider {}
