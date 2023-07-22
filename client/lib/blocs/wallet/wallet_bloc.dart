@@ -13,10 +13,10 @@ class WalletBloc extends Bloc<WalletEvent, WalletState> {
       BlocProvider.of(context, listen: listen);
 
   WalletBloc() : super(WalletInitial()) {
-    on<WalletEvent>((event, emit) {});
+    on<GetWalletDetails>(_getWalletDetails);
   }
 
-  Future<void> getWalletDetails(
+  Future<void> _getWalletDetails(
       GetWalletDetails event, Emitter<WalletState> emit) async {
     emit(
       WalletLoading(),
