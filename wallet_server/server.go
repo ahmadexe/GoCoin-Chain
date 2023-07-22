@@ -60,16 +60,21 @@ func (ws *WalletServer) CreateTransaction(w http.ResponseWriter, r *http.Request
 			return
 		}
 
-		fmt.Println(tr.SenderPublicKey)
-		fmt.Println(tr.SenderPrivateKey)
-		fmt.Println(tr.SenderBlockchainAddress)
-		fmt.Println(tr.RecipientBlockchainAddress)
-		fmt.Println(tr.Value)
+		fmt.Println(*tr.SenderPublicKey)
+		fmt.Println(*tr.SenderPrivateKey)
+		fmt.Println(*tr.SenderBlockchainAddress)
+		fmt.Println(*tr.RecipientBlockchainAddress)
+		fmt.Println(*tr.Value)
+
+	default:
+		w.WriteHeader(http.StatusMethodNotAllowed)
+		log.Println("Method not allowed")
 	}
 }
 
 func (ws *WalletServer) Start() {
 	http.HandleFunc("/wallet", ws.Wallet)
+	http.HandleFunc("/transaction", ws.CreateTransaction)
 	log.Printf("Wallet server listening on port %v\n", ws.Port())
 	log.Fatal(http.ListenAndServe("0.0.0.0:"+strconv.Itoa(int(ws.Port())), nil))
 
