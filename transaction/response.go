@@ -1,10 +1,10 @@
 package transaction
 
 type TransactionResponse struct {
-	SenderPrivateKey           *string `json:"sender_private_key"`
-	SenderPublicKey            *string `json:"sender_public_key"`
-	SenderBlockchainAddress    *string `json:"sender_blockchain_address"`
-	RecipientBlockchainAddress *string `json:"recipient_blockchain_address"`
+	SenderPrivateKey           *string `json:"senderPrivateKey"`
+	SenderPublicKey            *string `json:"senderPublicKey"`
+	SenderBlockchainAddress    *string `json:"senderBlockchainAddress"`
+	RecipientBlockchainAddress *string `json:"recipientBlockchainAddress"`
 	Value                      *string `json:"value"`
 }
 

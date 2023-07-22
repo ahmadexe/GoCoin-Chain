@@ -12,7 +12,12 @@ class TransactionsScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Wallet'),
+        backgroundColor: Colors.white,
+        elevation: 0,
+        title: const Text(
+          'Wallet',
+          style: TextStyle(color: Colors.black),
+        ),
       ),
       body: const _Body(),
     );
