@@ -118,3 +118,15 @@ func (t *Transaction) GenerateSignature() *utils.Signature {
 	r, s, _ := ecdsa.Sign(rand.Reader, t.senderPrivateKey, h[:])
 	return &utils.Signature{R: r, S: s}
 }
+
+func (w *Wallet) MarshalJSON() ([]byte, error) {
+	return json.Marshal(struct {
+		PrivateKey        string `json:"privateKey"`
+		PublicKey         string `json:"publicKey"`
+		BlockchainAddress string `json:"blockchainAddress"`
+	}{
+		PrivateKey:        w.PrivateKeyStr(),
+		PublicKey:         w.PublicKeyStr(),
+		BlockchainAddress: w.BlockchainAddress,
+	})
+}
