@@ -10,6 +10,8 @@ part 'data_provider.dart';
 part 'repository.dart';
 
 class TransactionBloc extends Bloc<TransactionEvent, TransactionState> {
+  static TransactionBloc get(context, [listen = true]) =>
+      BlocProvider.of(context, listen: listen);
   TransactionBloc() : super(TransactionInitial()) {
     on<CreateTransaction>(_createTransaction);
   }

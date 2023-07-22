@@ -1,3 +1,4 @@
+import 'package:client/blocs/transaction/transaction_bloc.dart';
 import 'package:client/blocs/wallet/wallet_bloc.dart';
 import 'package:client/screens/transactions/transactions.dart';
 import 'package:flutter/material.dart';
@@ -15,6 +16,7 @@ class MyApp extends StatelessWidget {
     return MultiBlocProvider(
       providers: [
         BlocProvider(create: (_) => WalletBloc()),
+        BlocProvider(create: (_) => TransactionBloc()),
       ],
       child: const MaterialApp(
         home: TransactionsScreen(),

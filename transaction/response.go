@@ -5,7 +5,7 @@ type TransactionResponse struct {
 	SenderPublicKey            *string `json:"senderPublicKey"`
 	SenderBlockchainAddress    *string `json:"senderBlockchainAddress"`
 	RecipientBlockchainAddress *string `json:"recipientBlockchainAddress"`
-	Value                      *string `json:"value"`
+	Value                      *float32 `json:"value"`
 }
 
 func (tr *TransactionResponse) Validate() bool {
