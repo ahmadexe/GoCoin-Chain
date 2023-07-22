@@ -1,11 +1,12 @@
 part of '../transactions.dart';
 
 class _Body extends StatelessWidget {
-  const _Body({super.key});
+  const _Body();
 
   @override
   Widget build(BuildContext context) {
     final appMedia = MediaQuery.sizeOf(context);
+    
     return SingleChildScrollView(
       padding: EdgeInsets.all(appMedia.width * 0.05),
       child: const Column(
