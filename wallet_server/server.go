@@ -1,11 +1,14 @@
 package main
 
 import (
+	"encoding/json"
+	"fmt"
 	"io"
 	"log"
 	"net/http"
 	"strconv"
 
+	"github.com/ahmadexe/GoCoin-Chain/transaction"
 	"github.com/ahmadexe/GoCoin-Chain/wallet"
 )
 
@@ -37,6 +40,31 @@ func (ws *WalletServer) Wallet(w http.ResponseWriter, r *http.Request) {
 	default:
 		w.WriteHeader(http.StatusMethodNotAllowed)
 		log.Println("Method not allowed")
+	}
+}
+
+func (ws *WalletServer) CreateTransaction(w http.ResponseWriter, r *http.Request) {
+	switch r.Method {
+	case http.MethodPost:
+		decoder := json.NewDecoder(r.Body)
+		var tr transaction.TransactionResponse
+		err := decoder.Decode(&tr)
+		if err != nil {
+			w.WriteHeader(http.StatusBadRequest)
+			log.Println("Bad Request")
+			return
+		}
+		if !tr.Validate() {
+			w.WriteHeader(http.StatusBadRequest)
+			log.Println("Bad Request")
+			return
+		}
+
+		fmt.Println(tr.SenderPublicKey)
+		fmt.Println(tr.SenderPrivateKey)
+		fmt.Println(tr.SenderBlockchainAddress)
+		fmt.Println(tr.RecipientBlockchainAddress)
+		fmt.Println(tr.Value)
 	}
 }
 

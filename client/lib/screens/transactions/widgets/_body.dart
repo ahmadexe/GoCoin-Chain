@@ -144,7 +144,7 @@ class _BodyState extends State<_Body> {
                     name: 'receiver-address',
                     decoration: InputDecoration(
                       hintText: 'Receivers Address',
-                      prefixIcon: const Icon(Icons.key),
+                      prefixIcon: const Icon(Icons.security_sharp),
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(10),
                       ),
@@ -154,7 +154,7 @@ class _BodyState extends State<_Body> {
                     height: 20,
                   ),
                   const Text(
-                    'Blockchain Address',
+                    'Ammount',
                     style: TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.w600,
@@ -167,7 +167,7 @@ class _BodyState extends State<_Body> {
                     name: 'ammount',
                     decoration: InputDecoration(
                       hintText: 'Ammount',
-                      prefixIcon: const Icon(Icons.key),
+                      prefixIcon: const Icon(Icons.home_work_sharp),
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(10),
                       ),
