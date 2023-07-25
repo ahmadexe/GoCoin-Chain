@@ -85,7 +85,7 @@ func (w *Wallet) PrivateKeyStr() string {
 }
 
 func (w *Wallet) PublicKeyStr() string {
-	return fmt.Sprintf("%x%x", w.PublicKey.X.Bytes(), w.PublicKey.Y.Bytes())
+	return fmt.Sprintf("%064x%064x", w.PublicKey.X.Bytes(), w.PublicKey.Y.Bytes())
 }
 
 type Transaction struct {
