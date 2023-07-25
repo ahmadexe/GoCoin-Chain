@@ -2,12 +2,14 @@ package main
 
 import (
 	"encoding/json"
+	"fmt"
 	"io"
 	"log"
 	"net/http"
 	"strconv"
 
 	"github.com/ahmadexe/GoCoin-Chain/transaction"
+	"github.com/ahmadexe/GoCoin-Chain/utils"
 	"github.com/ahmadexe/GoCoin-Chain/wallet"
 )
 
@@ -58,6 +60,12 @@ func (ws *WalletServer) CreateTransaction(w http.ResponseWriter, r *http.Request
 			log.Println("Bad Request")
 			return
 		}
+
+		publicKey := utils.PublicKeyFromString(*tr.SenderPublicKey)
+		privateKey := utils.PrivateKeyFromString(*tr.SenderPrivateKey, publicKey)
+
+		fmt.Println("Sender Public Key: ", publicKey)
+		fmt.Println("Sender Private Key: ", privateKey)
 
 	default:
 		w.WriteHeader(http.StatusMethodNotAllowed)
