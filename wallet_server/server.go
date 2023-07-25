@@ -2,7 +2,6 @@ package main
 
 import (
 	"encoding/json"
-	"fmt"
 	"io"
 	"log"
 	"net/http"
@@ -59,12 +58,6 @@ func (ws *WalletServer) CreateTransaction(w http.ResponseWriter, r *http.Request
 			log.Println("Bad Request")
 			return
 		}
-
-		fmt.Println(*tr.SenderPublicKey)
-		fmt.Println(*tr.SenderPrivateKey)
-		fmt.Println(*tr.SenderBlockchainAddress)
-		fmt.Println(*tr.RecipientBlockchainAddress)
-		fmt.Println(*tr.Value)
 
 	default:
 		w.WriteHeader(http.StatusMethodNotAllowed)
