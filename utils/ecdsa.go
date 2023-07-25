@@ -17,6 +17,11 @@ func (s *Signature) String() string {
 	return fmt.Sprintf("%x%x", s.R, s.S)
 }
 
+func SignatureFromString(str string) *Signature {
+	x, y := StringToBigIntTuple(str)
+	return &Signature{R: &x, S: &y}
+}
+
 func StringToBigIntTuple(str string) (big.Int, big.Int) {
 	bx, _ := hex.DecodeString(str[:64])
 	by, _ := hex.DecodeString(str[64:])
