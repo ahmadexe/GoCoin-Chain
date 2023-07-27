@@ -72,6 +72,14 @@ func (bc *Blockchain) AddTransaction(senderChainAddress string, recipientChainAd
 	return false
 }
 
+func (bc *Blockchain) CreateTransaction(senderChainAddress string, recipientChainAddress string, value float32, senderPublicKey *ecdsa.PublicKey, signature *utils.Signature) bool {
+	isTransacted := bc.AddTransaction(senderChainAddress, recipientChainAddress, value, senderPublicKey, signature)
+	
+	// TODO: Sync Blockchain servers
+
+	return isTransacted
+}
+
 func (bc *Blockchain) LastBlock() *block.Block {
 	return bc.Chain[len(bc.Chain)-1]
 }

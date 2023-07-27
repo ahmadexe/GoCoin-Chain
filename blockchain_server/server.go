@@ -7,8 +7,10 @@ import (
 	"net/http"
 	"strconv"
 
+	"github.com/ahmadexe/GoCoin-Chain/block"
 	"github.com/ahmadexe/GoCoin-Chain/blockchain"
 	"github.com/ahmadexe/GoCoin-Chain/transaction"
+	"github.com/ahmadexe/GoCoin-Chain/utils"
 	"github.com/ahmadexe/GoCoin-Chain/wallet"
 )
 
@@ -57,27 +59,59 @@ func HelloWorld(w http.ResponseWriter, r *http.Request) {
 	io.WriteString(w, "Hello World")
 }
 
-func (bcs *BlockchainServer) Transactions(w *http.ResponseWriter, r *http.Request) {
+func (bcs *BlockchainServer) Transactions(w http.ResponseWriter, r *http.Request) {
 	switch r.Method {
+	case http.MethodGet:
+		w.Header().Add("Content-Type", "application/json")
+		bc := bcs.GetBlockchain()
+
+		m, _ := json.Marshal(struct {
+			Transactions []*transaction.Transaction `json:"transactions"`
+			Length int `json:"length"`
+		}{
+			Transactions: bc.TransactionPool,
+			Length: len(bc.TransactionPool),
+		})
+
+		io.WriteString(w, string(m[:]))
+
+
 	case http.MethodPost:
 		decoder := json.NewDecoder(r.Body)
-		var t transaction.TransactionResponse
+		var t block.TransactionRequest
 		err := decoder.Decode(&t)
 		if err != nil {
-			(*w).WriteHeader(http.StatusBadRequest)
+			w.WriteHeader(http.StatusBadRequest)
 			log.Println("Bad Request")
 			return
 		}
 		if !t.Validate() {
-			(*w).WriteHeader(http.StatusBadRequest)
+			w.WriteHeader(http.StatusBadRequest)
 			log.Println("Bad Request")
 			return
 		}
-		
+
+		publicKey := utils.PublicKeyFromString(*t.SenderPublicKey)
+		signature := utils.SignatureFromString(*t.Signature)
+
+		bc := bcs.GetBlockchain()
+
+		isCreated := bc.CreateTransaction(*t.SenderChainAddress, *t.RecepientChainhainAddress, *t.Value, publicKey, signature)
+
+		w.Header().Add("Content-Type", "application/json")
+
+		if isCreated {
+			w.WriteHeader(http.StatusCreated)
+			log.Println("Transaction created")
+			return
+		}
+		w.WriteHeader(http.StatusBadRequest)
+		log.Println("Bad Request")
 	}
 }
 
 func (bcs *BlockchainServer) Run() {
 	http.HandleFunc("/", bcs.GetChain)
+	http.HandleFunc("/transactions", bcs.Transactions)
 	log.Fatal(http.ListenAndServe("0.0.0.0:"+strconv.Itoa(int(bcs.Port())), nil))
 }

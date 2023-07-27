@@ -3,6 +3,7 @@ package main
 import (
 	"bytes"
 	"encoding/json"
+	"fmt"
 	"io"
 	"log"
 	"net/http"
@@ -80,10 +81,12 @@ func (ws *WalletServer) CreateTransaction(w http.ResponseWriter, r *http.Request
 
 		m, _ := json.Marshal(bt)
 		buf := bytes.NewBuffer(m)
-		resp, err := http.Post("http://"+ws.Gateway()+"/transaction", "application/json", buf)
+		fmt.Println("http://"+ws.Gateway()+"/transaction")
+		resp, err := http.Post("http://"+ws.Gateway()+"/transactions", "application/json", buf)
+		
 		if err != nil {
 			w.WriteHeader(http.StatusInternalServerError)
-			log.Println("Internal Server Error")
+			log.Println("Internal Server Error 1")
 			return
 		}
 
@@ -93,7 +96,7 @@ func (ws *WalletServer) CreateTransaction(w http.ResponseWriter, r *http.Request
 		}
 
 		w.WriteHeader(http.StatusInternalServerError)
-		log.Println("Internal Server Error")
+		log.Println("Internal Server Error 2")
 
 	default:
 		w.WriteHeader(http.StatusMethodNotAllowed)
