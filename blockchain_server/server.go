@@ -8,6 +8,7 @@ import (
 	"strconv"
 
 	"github.com/ahmadexe/GoCoin-Chain/blockchain"
+	"github.com/ahmadexe/GoCoin-Chain/transaction"
 	"github.com/ahmadexe/GoCoin-Chain/wallet"
 )
 
@@ -54,6 +55,26 @@ func (bcs *BlockchainServer) Port() uint16 {
 
 func HelloWorld(w http.ResponseWriter, r *http.Request) {
 	io.WriteString(w, "Hello World")
+}
+
+func (bcs *BlockchainServer) Transactions(w *http.ResponseWriter, r *http.Request) {
+	switch r.Method {
+	case http.MethodPost:
+		decoder := json.NewDecoder(r.Body)
+		var t transaction.TransactionResponse
+		err := decoder.Decode(&t)
+		if err != nil {
+			(*w).WriteHeader(http.StatusBadRequest)
+			log.Println("Bad Request")
+			return
+		}
+		if !t.Validate() {
+			(*w).WriteHeader(http.StatusBadRequest)
+			log.Println("Bad Request")
+			return
+		}
+		
+	}
 }
 
 func (bcs *BlockchainServer) Run() {

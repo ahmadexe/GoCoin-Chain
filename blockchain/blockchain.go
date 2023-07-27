@@ -144,3 +144,5 @@ func (bc *Blockchain) Print() {
 		fmt.Println(strings.Repeat("-", 53))
 	}
 }
+
+

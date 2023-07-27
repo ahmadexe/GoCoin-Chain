@@ -1,13 +1,14 @@
 package main
 
 import (
+	"bytes"
 	"encoding/json"
-	"fmt"
 	"io"
 	"log"
 	"net/http"
 	"strconv"
 
+	"github.com/ahmadexe/GoCoin-Chain/block"
 	"github.com/ahmadexe/GoCoin-Chain/transaction"
 	"github.com/ahmadexe/GoCoin-Chain/utils"
 	"github.com/ahmadexe/GoCoin-Chain/wallet"
@@ -63,9 +64,36 @@ func (ws *WalletServer) CreateTransaction(w http.ResponseWriter, r *http.Request
 
 		publicKey := utils.PublicKeyFromString(*tr.SenderPublicKey)
 		privateKey := utils.PrivateKeyFromString(*tr.SenderPrivateKey, publicKey)
+		w.Header().Add("Content-Type", "application/json")
 
-		fmt.Println("Sender Public Key: ", publicKey)
-		fmt.Println("Sender Private Key: ", privateKey)
+		transaction := wallet.NewTransaction(privateKey, publicKey, *tr.SenderBlockchainAddress, *tr.RecipientBlockchainAddress, *tr.Value)
+
+		signature := transaction.GenerateSignature()
+		signatureStr := signature.String()
+
+		bt := &block.TransactionRequest{
+			SenderPublicKey:           tr.SenderPublicKey,
+			SenderChainAddress:        tr.SenderBlockchainAddress,
+			Signature:                 &signatureStr,
+			RecepientChainhainAddress: tr.RecipientBlockchainAddress,
+			Value:                     tr.Value}
+
+		m, _ := json.Marshal(bt)
+		buf := bytes.NewBuffer(m)
+		resp, err := http.Post("http://"+ws.Gateway()+"/transaction", "application/json", buf)
+		if err != nil {
+			w.WriteHeader(http.StatusInternalServerError)
+			log.Println("Internal Server Error")
+			return
+		}
+
+		if resp.StatusCode == http.StatusCreated {
+			io.WriteString(w, string(rune(http.StatusCreated)))
+			return
+		}
+
+		w.WriteHeader(http.StatusInternalServerError)
+		log.Println("Internal Server Error")
 
 	default:
 		w.WriteHeader(http.StatusMethodNotAllowed)

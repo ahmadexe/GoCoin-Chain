@@ -48,3 +48,15 @@ func (b *Block) Hash() [32]byte {
 	m, _ := json.Marshal(b)
 	return sha256.Sum256(m)
 }
+
+type TransactionRequest struct {
+	SenderPublicKey           *string  `json:"senderPublicKey"`
+	SenderChainAddress        *string  `json:"senderChainAddress"`
+	Signature                 *string  `json:"signature"`
+	RecepientChainhainAddress *string  `json:"recepientChainhainAddress"`
+	Value                     *float32 `json:"value"`
+}
+
+func (tr *TransactionRequest) Validate() bool {
+	return tr.SenderPublicKey != nil && tr.SenderChainAddress != nil && tr.Signature != nil && tr.RecepientChainhainAddress != nil && tr.Value != nil
+}
