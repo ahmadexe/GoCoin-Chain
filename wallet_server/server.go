@@ -106,5 +106,4 @@ func (ws *WalletServer) Start() {
 	http.HandleFunc("/transaction", ws.CreateTransaction)
 	log.Printf("Wallet server listening on port %v\n", ws.Port())
 	log.Fatal(http.ListenAndServe("0.0.0.0:"+strconv.Itoa(int(ws.Port())), nil))
-
 }
