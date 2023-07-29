@@ -6,7 +6,7 @@ class _WallterProvider {
   static Future<Wallet> getWalletDetails() async {
     try {
       final response = await _handler.post(
-        'http://0.0.0.0:5050/wallet',
+        'http://10.0.2.2:5050/wallet',
       );
 
       final wallet = Wallet.fromMap(response.data as Map<String, dynamic>);

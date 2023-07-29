@@ -67,14 +67,13 @@ func (bcs *BlockchainServer) Transactions(w http.ResponseWriter, r *http.Request
 
 		m, _ := json.Marshal(struct {
 			Transactions []*transaction.Transaction `json:"transactions"`
-			Length int `json:"length"`
+			Length       int                        `json:"length"`
 		}{
 			Transactions: bc.TransactionPool,
-			Length: len(bc.TransactionPool),
+			Length:       len(bc.TransactionPool),
 		})
 
 		io.WriteString(w, string(m[:]))
-
 
 	case http.MethodPost:
 		decoder := json.NewDecoder(r.Body)
@@ -110,8 +109,30 @@ func (bcs *BlockchainServer) Transactions(w http.ResponseWriter, r *http.Request
 	}
 }
 
+func (bcs *BlockchainServer) Mine(w http.ResponseWriter, r *http.Request) {
+	switch r.Method {
+	case http.MethodGet:
+		bc := bcs.GetBlockchain()
+		isMined := bc.Mining()
+		if isMined {
+			log.Println("Mined")
+			w.WriteHeader(http.StatusCreated)
+			return
+		} else {
+			log.Println("Not Mined")
+			w.WriteHeader(http.StatusConflict)
+			return
+		}
+
+	default:
+		w.WriteHeader(http.StatusMethodNotAllowed)
+		log.Println("Method not allowed")
+	}
+}
+
 func (bcs *BlockchainServer) Run() {
 	http.HandleFunc("/", bcs.GetChain)
 	http.HandleFunc("/transactions", bcs.Transactions)
+	http.HandleFunc("/mine", bcs.Mine)
 	log.Fatal(http.ListenAndServe("0.0.0.0:"+strconv.Itoa(int(bcs.Port())), nil))
 }
