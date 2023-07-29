@@ -6,10 +6,13 @@ import (
 	"encoding/json"
 	"fmt"
 	"strings"
+	"time"
 
 	"github.com/ahmadexe/GoCoin-Chain/block"
 	"github.com/ahmadexe/GoCoin-Chain/transaction"
 	"github.com/ahmadexe/GoCoin-Chain/utils"
+
+	"sync"
 )
 
 type Blockchain struct {
@@ -17,7 +20,15 @@ type Blockchain struct {
 	Chain             []*block.Block
 	BlockchainAddress string
 	Port              uint16
+	mutex             sync.Mutex
 }
+
+const (
+	MINING_DIFFICULTY = 3
+	MINING_REWARD     = 1.0
+	MINING_SENDER     = "THE BLOCKCHAIN"
+	MINING_TIMER_SEC  = 20
+)
 
 func (bc *Blockchain) MarshalJSON() ([]byte, error) {
 	return json.Marshal(struct {
@@ -33,12 +44,6 @@ func (bc *Blockchain) MarshalJSON() ([]byte, error) {
 	})
 }
 
-const (
-	MINING_DIFFICULTY = 3
-	MINING_REWARD     = 1.0
-	MINING_SENDER     = "THE BLOCKCHAIN"
-)
-
 func NewBlockchain(blockchainAddress string, port uint16) *Blockchain {
 	b := &block.Block{}
 	bc := &Blockchain{
@@ -46,6 +51,7 @@ func NewBlockchain(blockchainAddress string, port uint16) *Blockchain {
 		[]*block.Block{},
 		blockchainAddress,
 		port,
+		sync.Mutex{},
 	}
 	bc.createBlock(0, b.Hash())
 	return bc
@@ -74,7 +80,7 @@ func (bc *Blockchain) AddTransaction(senderChainAddress string, recipientChainAd
 
 func (bc *Blockchain) CreateTransaction(senderChainAddress string, recipientChainAddress string, value float32, senderPublicKey *ecdsa.PublicKey, signature *utils.Signature) bool {
 	isTransacted := bc.AddTransaction(senderChainAddress, recipientChainAddress, value, senderPublicKey, signature)
-	
+
 	// TODO: Sync Blockchain servers
 
 	return isTransacted
@@ -116,12 +122,24 @@ func (bc *Blockchain) ProofOfWork() int {
 }
 
 func (bc *Blockchain) Mining() bool {
+	bc.mutex.Lock()
+	defer bc.mutex.Unlock()
+
+	if len(bc.TransactionPool) == 0 {
+		return false
+	}
+
 	bc.AddTransaction(MINING_SENDER, bc.BlockchainAddress, MINING_REWARD, nil, nil)
 	nonce := bc.ProofOfWork()
 	previousHash := bc.LastBlock().Hash()
 	bc.createBlock(nonce, previousHash)
 	fmt.Println("Mining is successful!")
 	return true
+}
+
+func (bc *Blockchain) StartMining() {
+	bc.Mining()
+	_ = time.AfterFunc(time.Second * MINING_TIMER_SEC, bc.StartMining)
 }
 
 func (bc *Blockchain) CalculateBalance(address string) float32 {
@@ -152,5 +170,3 @@ func (bc *Blockchain) Print() {
 		fmt.Println(strings.Repeat("-", 53))
 	}
 }
-
-
