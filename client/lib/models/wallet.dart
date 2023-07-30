@@ -32,7 +32,6 @@ class Wallet {
       'publicKey': publicKey,
       'privateKey': privateKey,
       'blockchainAddress': blockchainAddress,
-      'amount': amount,
     };
   }
 
@@ -41,7 +40,6 @@ class Wallet {
       publicKey: map['publicKey'] as String,
       privateKey: map['privateKey'] as String,
       blockchainAddress: map['blockchainAddress'] as String,
-      amount: map['amount'] as double,
     );
   }
 
