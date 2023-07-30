@@ -31,7 +31,7 @@ class _BodyState extends State<_Body> {
               child: CircularProgressIndicator(),
             );
           } else if (state.wallet is WalletInfoLoaded) {
-            final wallet = state.wallet.wallet!;
+            final wallet = state.wallet!;
 
             return FormBuilder(
               key: _formKey,
@@ -230,7 +230,7 @@ class _BodyState extends State<_Body> {
             );
           } else {
             return Center(
-              child: Text(state.wallet.message!),
+              child: Text(state.walletInfo.message!),
             );
           }
         },

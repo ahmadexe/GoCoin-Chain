@@ -2,11 +2,9 @@ part of '../wallet_bloc.dart';
 
 @immutable
 abstract class WalletInfoState {
-  final Wallet? wallet;
   final String? message;
 
   const WalletInfoState({
-    this.wallet,
     this.message,
   });
 }
@@ -18,9 +16,7 @@ class WalletInfoDefault extends WalletInfoState {
 class WalletInfoLoading extends WalletInfoState {}
 
 class WalletInfoLoaded extends WalletInfoState {
-  const WalletInfoLoaded({
-    required Wallet wallet,
-  }) : super(wallet: wallet);
+  const WalletInfoLoaded() : super();
 }
 
 class WalletInfoError extends WalletInfoState {

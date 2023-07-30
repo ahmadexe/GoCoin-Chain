@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 part 'wallet_event.dart';
-part '_states/wallet_state.dart';
+part '_states/_wallet_state.dart';
 part 'state.dart';
 part 'data_provider.dart';
 
@@ -21,7 +21,7 @@ class WalletBloc extends Bloc<WalletEvent, WalletState> {
       GetWalletDetails event, Emitter<WalletState> emit) async {
     emit(
       state.copyWith(
-        wallet: WalletInfoLoading(),
+        walletInfo: WalletInfoLoading(),
       ),
     );
 
@@ -30,7 +30,8 @@ class WalletBloc extends Bloc<WalletEvent, WalletState> {
 
       emit(
         state.copyWith(
-          wallet: WalletInfoLoaded(wallet: wallet),
+          wallet: wallet,
+          walletInfo: const WalletInfoLoaded(),
         ),
       );
     } catch (e) {
@@ -38,7 +39,7 @@ class WalletBloc extends Bloc<WalletEvent, WalletState> {
       debugPrint(e.toString());
       emit(
         state.copyWith(
-          wallet: WalletInfoError(
+          walletInfo: WalletInfoError(
             message: e.toString(),
           ),
         ),

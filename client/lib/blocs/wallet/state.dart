@@ -1,24 +1,28 @@
 part of 'wallet_bloc.dart';
 
 class WalletState extends Equatable {
-  final WalletInfoState wallet;
+  final Wallet? wallet;
+  final WalletInfoState walletInfo;
 
   const WalletState({
-    required this.wallet,
+    this.wallet,
+    required this.walletInfo,
   });
 
   WalletState copyWith({
-    WalletInfoState? wallet,
+    Wallet? wallet,
+    WalletInfoState? walletInfo,
   }) {
     return WalletState(
       wallet: wallet ?? this.wallet,
+      walletInfo: walletInfo ?? this.walletInfo,
     );
   }
   
   @override
-  List<Object?> get props => [wallet];
+  List<Object?> get props => [wallet, walletInfo];
 }
 
 class WalletDefault extends WalletState {
-  const WalletDefault() : super(wallet: const WalletInfoDefault());
+  const WalletDefault() : super(walletInfo: const WalletInfoDefault());
 }
