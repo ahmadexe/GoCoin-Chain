@@ -28,7 +28,7 @@ class _WallterProvider {
       });
 
       final raw = response.data as Map<String, dynamic>;
-      final amount = raw['amount'] as double;
+      final amount = raw['amount'].toDouble();
       return amount;
     } catch (e) {
       debugPrint('----- ERROR in Wallet Amount Provider -----');

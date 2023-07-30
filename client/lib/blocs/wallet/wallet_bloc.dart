@@ -17,6 +17,7 @@ class WalletBloc extends Bloc<WalletEvent, WalletState> {
 
   WalletBloc() : super(const WalletDefault()) {
     on<GetWalletDetails>(_getWalletDetails);
+    on<GetWalletAmount>(_getAmount);
   }
 
   Future<void> _getWalletDetails(
@@ -49,7 +50,7 @@ class WalletBloc extends Bloc<WalletEvent, WalletState> {
     }
   }
 
-  Future<void> getAmount(
+  Future<void> _getAmount(
       GetWalletAmount event, Emitter<WalletState> emit) async {
     emit(
       state.copyWith(
