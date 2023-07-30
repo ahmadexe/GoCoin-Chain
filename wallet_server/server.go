@@ -10,6 +10,7 @@ import (
 	"strconv"
 
 	"github.com/ahmadexe/GoCoin-Chain/block"
+	"github.com/ahmadexe/GoCoin-Chain/blockchain"
 	"github.com/ahmadexe/GoCoin-Chain/transaction"
 	"github.com/ahmadexe/GoCoin-Chain/utils"
 	"github.com/ahmadexe/GoCoin-Chain/wallet"
@@ -28,6 +29,9 @@ func (ws *WalletServer) Port() uint16 {
 	return ws.port
 }
 
+
+// The gateway where the blockchain server is running is passed as a parameter to the wallet server. 
+// This is because the wallet server needs to know where to send the transaction request and fetch other details.
 func (ws *WalletServer) Gateway() string {
 	return ws.gateway
 }
@@ -104,9 +108,46 @@ func (ws *WalletServer) CreateTransaction(w http.ResponseWriter, r *http.Request
 	}
 }
 
+func (ws *WalletServer) WalletAmount(w http.ResponseWriter, r *http.Request) {
+	switch r.Method {
+	case http.MethodGet:
+		chainAddress := r.URL.Query().Get("blockchain_address")
+		endPoint := fmt.Sprintf("http://%s/amount?blockchain_address=%s", ws.Gateway(), chainAddress)
+		client := &http.Client{}
+		resp, err := client.Get(endPoint)
+		if err != nil {
+			w.WriteHeader(http.StatusInternalServerError)
+			log.Println("Internal Server Error")
+			return
+		}
+		defer resp.Body.Close()
+		if resp.StatusCode == http.StatusOK {
+			decoder := json.NewDecoder(resp.Body)
+			var ar blockchain.AmountResponse
+			err := decoder.Decode(&ar)
+			if err != nil {
+				w.WriteHeader(http.StatusInternalServerError)
+				log.Println("Internal Server Error")
+				return
+			}
+			w.Header().Add("Content-Type", "application/json")
+			m, _ := ar.MarshalJSON()
+			io.WriteString(w, string(m))
+			return
+		}
+		w.WriteHeader(http.StatusInternalServerError)
+		log.Println("Internal Server Error")
+
+	default:
+		w.WriteHeader(http.StatusMethodNotAllowed)
+		log.Println("Method not allowed")
+	}
+}
+
 func (ws *WalletServer) Start() {
 	http.HandleFunc("/wallet", ws.Wallet)
 	http.HandleFunc("/transaction", ws.CreateTransaction)
+	http.HandleFunc("/wallet/amount", ws.WalletAmount)
 	log.Printf("Wallet server listening on port %v\n", ws.Port())
 	log.Fatal(http.ListenAndServe("0.0.0.0:"+strconv.Itoa(int(ws.Port())), nil))
 }
