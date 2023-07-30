@@ -1,6 +1,7 @@
 import 'package:client/blocs/transaction/transaction_bloc.dart';
 import 'package:client/blocs/wallet/wallet_bloc.dart';
 import 'package:client/models/transaction.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
@@ -20,6 +21,15 @@ class TransactionsScreen extends StatelessWidget {
           'Wallet',
           style: TextStyle(color: Colors.black),
         ),
+        actions: [
+          IconButton(
+            onPressed: () {},
+            icon: const Icon(
+              CupertinoIcons.paperplane_fill,
+              color: Colors.black,
+            ),
+          ),
+        ],
       ),
       body: const _Body(),
     );

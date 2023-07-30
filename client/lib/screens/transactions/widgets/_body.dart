@@ -12,7 +12,7 @@ class _BodyState extends State<_Body> {
   void initState() {
     super.initState();
     final walletBloc = WalletBloc.get(context, false);
-    walletBloc.add(GetWalletDetails());
+    walletBloc.add(const GetWalletDetails());
   }
 
   static final GlobalKey<FormBuilderState> _formKey =
@@ -26,11 +26,11 @@ class _BodyState extends State<_Body> {
       padding: EdgeInsets.all(appMedia.width * 0.05),
       child: BlocBuilder<WalletBloc, WalletState>(
         builder: (context, state) {
-          if (state.wallet is WalletInfoLoading) {
+          if (state.walletInfo is WalletInfoLoading || state.walletInfo is WalletInfoDefault) {
             return const Center(
               child: CircularProgressIndicator(),
             );
-          } else if (state.wallet is WalletInfoLoaded) {
+          } else if (state.walletInfo is WalletInfoLoaded) {
             final wallet = state.wallet!;
 
             return FormBuilder(

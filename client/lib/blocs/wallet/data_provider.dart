@@ -18,4 +18,22 @@ class _WallterProvider {
       throw Exception('Failed to get wallet details');
     }
   }
+
+  static Future<double> getAmount(String chainAddress) async {
+    try {
+      const String endPoint = 'http://0.0.0.0:5050/wallet/amount';
+
+      final response = await _handler.get(endPoint, queryParameters: {
+        'blockchain_address': chainAddress,
+      });
+
+      final raw = response.data as Map<String, dynamic>;
+      final amount = raw['amount'] as double;
+      return amount;
+    } catch (e) {
+      debugPrint('----- ERROR in Wallet Amount Provider -----');
+      debugPrint(e.toString());
+      throw Exception('Failed to get wallet amount');
+    }
+  }
 }
