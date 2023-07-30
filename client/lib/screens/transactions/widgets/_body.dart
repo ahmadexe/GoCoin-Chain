@@ -26,12 +26,12 @@ class _BodyState extends State<_Body> {
       padding: EdgeInsets.all(appMedia.width * 0.05),
       child: BlocBuilder<WalletBloc, WalletState>(
         builder: (context, state) {
-          if (state is WalletLoading || state is WalletInitial) {
+          if (state.wallet is WalletInfoLoading) {
             return const Center(
               child: CircularProgressIndicator(),
             );
-          } else if (state is WalletLoaded) {
-            final wallet = state.wallet!;
+          } else if (state.wallet is WalletInfoLoaded) {
+            final wallet = state.wallet.wallet!;
 
             return FormBuilder(
               key: _formKey,
@@ -230,7 +230,7 @@ class _BodyState extends State<_Body> {
             );
           } else {
             return Center(
-              child: Text(state.message!),
+              child: Text(state.wallet.message!),
             );
           }
         },

@@ -1,38 +1,47 @@
 import 'package:client/models/wallet.dart';
 import 'package:dio/dio.dart';
+import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 part 'wallet_event.dart';
-part 'wallet_state.dart';
-
+part '_states/wallet_state.dart';
+part 'state.dart';
 part 'data_provider.dart';
 
 class WalletBloc extends Bloc<WalletEvent, WalletState> {
   static WalletBloc get(context, [listen = true]) =>
       BlocProvider.of(context, listen: listen);
 
-  WalletBloc() : super(WalletInitial()) {
+  WalletBloc() : super(const WalletDefault()) {
     on<GetWalletDetails>(_getWalletDetails);
   }
 
   Future<void> _getWalletDetails(
       GetWalletDetails event, Emitter<WalletState> emit) async {
     emit(
-      WalletLoading(),
+      state.copyWith(
+        wallet: WalletInfoLoading(),
+      ),
     );
 
     try {
       final wallet = await _WallterProvider.getWalletDetails();
 
       emit(
-        WalletLoaded(wallet: wallet),
+        state.copyWith(
+          wallet: WalletInfoLoaded(wallet: wallet),
+        ),
       );
     } catch (e) {
       debugPrint('----- ERROR in Wallet Details Provider -----');
       debugPrint(e.toString());
       emit(
-        const WalletError(message: 'Failed to get wallet details'),
+        state.copyWith(
+          wallet: WalletInfoError(
+            message: e.toString(),
+          ),
+        ),
       );
     }
   }
